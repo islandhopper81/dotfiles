@@ -24,7 +24,26 @@ install_claude_cli() {
     error "curl is not installed. Please install curl and try again."
   fi
 
-  curl -fsSL https://raw.githubusercontent.com/anthropic/claude-cli/main/install.sh | sh
+  local urls=(
+    "https://cli.anthropic.com/install.sh"
+    "https://raw.githubusercontent.com/anthropic/claude-cli/main/install.sh"
+  )
+  local installer_url=""
+
+  for url in "${urls[@]}"; do
+    info "Checking Claude installer URL: $url"
+    if curl -fsSL -o /dev/null -w "%{http_code}" -L "$url" >/dev/null 2>&1; then
+      installer_url="$url"
+      break
+    fi
+  done
+
+  if [ -z "$installer_url" ]; then
+    error "Unable to find a working Claude CLI installer URL. Checked: ${urls[*]}"
+  fi
+
+  info "Downloading Claude installer from $installer_url"
+  curl -fsSL "$installer_url" | sh
 }
 
 link_gitconfig() {
@@ -47,11 +66,7 @@ link_gitconfig() {
 
 link_gitconfig
 
-if command_exists curl; then
-  install_claude_cli
-else
-  error "curl is not installed. Please install curl and try again."
-fi
+install_claude_cli
 
 info "Claude CLI installation complete."
 info "The repository .gitconfig is now linked to ~/.gitconfig."
