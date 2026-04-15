@@ -18,9 +18,13 @@ command_exists() {
   command -v "$1" >/dev/null 2>&1
 }
 
-install_node_claude() {
-  info "Installing Claude CLI package '@anthropic-ai/claude' via npm..."
-  npm install -g @anthropic-ai/claude
+install_claude_cli() {
+  info "Installing Claude CLI using Anthropic's approved curl installer..."
+  if ! command_exists curl; then
+    error "curl is not installed. Please install curl and try again."
+  fi
+
+  curl -fsSL https://raw.githubusercontent.com/anthropic/claude-cli/main/install.sh | sh
 }
 
 link_gitconfig() {
@@ -43,10 +47,10 @@ link_gitconfig() {
 
 link_gitconfig
 
-if command_exists npm; then
-  install_node_claude
+if command_exists curl; then
+  install_claude_cli
 else
-  error "npm is not installed. Please install Node.js and npm first."
+  error "curl is not installed. Please install curl and try again."
 fi
 
 info "Claude CLI installation complete."
