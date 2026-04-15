@@ -1,0 +1,35 @@
+[user]
+    name = Scott Yourstone
+    email = scott.yourstone81@gmail.com
+
+[core]
+    editor = vim
+    pager = less
+    excludesfile = ~/.gitignore_global
+    autocrlf = input
+    whitespace = fix
+
+[color]
+    ui = auto
+
+[alias]
+    co = checkout
+    br = branch
+    ci = commit
+    st = status
+    lg = log --oneline --graph --decorate --all
+    amend = commit --amend
+    unstage = reset HEAD --
+    last = log -1 --stat
+
+[credential]
+    helper = store
+
+[pull]
+    rebase = false
+
+[push]
+    default = simple
+
+[init]
+    defaultBranch = main
