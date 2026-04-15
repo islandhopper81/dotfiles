@@ -26,20 +26,28 @@ install_claude_cli() {
 
   local urls=(
     "https://cli.anthropic.com/install.sh"
+    "https://claude.ai/install.sh"
+    "https://claude.ai/cli/install.sh"
+    "https://anthropic.com/cli/install.sh"
+    "https://raw.githubusercontent.com/anthropic/claude/main/install.sh"
     "https://raw.githubusercontent.com/anthropic/claude-cli/main/install.sh"
   )
-  local installer_url=""
+  local installer_url="${CLAUDE_INSTALL_URL:-}"
 
-  for url in "${urls[@]}"; do
-    info "Checking Claude installer URL: $url"
-    if curl -fsSL -o /dev/null -w "%{http_code}" -L "$url" >/dev/null 2>&1; then
-      installer_url="$url"
-      break
-    fi
-  done
+  if [ -n "$installer_url" ]; then
+    info "Using Claude installer URL from CLAUDE_INSTALL_URL: $installer_url"
+  else
+    for url in "${urls[@]}"; do
+      info "Checking Claude installer URL: $url"
+      if curl -fsSL -o /dev/null -w "%{http_code}" -L "$url" >/dev/null 2>&1; then
+        installer_url="$url"
+        break
+      fi
+    done
+  fi
 
   if [ -z "$installer_url" ]; then
-    error "Unable to find a working Claude CLI installer URL. Checked: ${urls[*]}"
+    error "Unable to find a working Claude CLI installer URL. Checked: ${urls[*]}. Please verify the current Anthropic CLI installer location and set CLAUDE_INSTALL_URL if needed."
   fi
 
   info "Downloading Claude installer from $installer_url"
